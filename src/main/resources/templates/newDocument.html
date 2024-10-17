@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://thymeleaf.org">
+
+<head>
+    <meta charset="ISO-8859-1">
+    <title>Polyglot Documents</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
+          integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+</head>
+
+<body>
+<div class="container my-5">
+    <h1 class="text-center">Polyglot Documents<br>(Demo Spring Boot & Elasticsearch Application)<br/>
+        <a href="/" class="btn btn-danger text-right">Go Home</a>
+    </h1>
+    <hr>
+    <h2>Save Document</h2>
+
+    <form action="#" th:action="@{/saveDocument}" th:object="${document}" method="POST">
+        <div>
+            <label for="id">Document ID:</label>
+            <input type="text" id="id" th:field="*{id}" placeholder="Enter document ID" required/>
+        </div>
+
+        <h3>Body</h3>
+        <div id="body-entries">
+            <!-- If the map is empty, show one empty entry for adding a language -->
+            <div th:if="${#maps.isEmpty(document.body)}">
+                <label>Language:</label>
+                <input type="text" name="body[NEW_LANG]" placeholder="Enter language" required/>
+                <label>Text:</label>
+                <input type="text" name="body[NEW_LANG]" placeholder="Enter text" required/>
+            </div>
+
+            <!-- Loop over existing map entries -->
+            <div th:each="entry, iterStat : *{body}">
+                <label>Language:</label>
+                <input type="text" th:field="*{body[__${entry.key}__]}" value="[[${entry.key}]]"
+                       placeholder="Enter language" required/>
+                <label>Text:</label>
+                <input type="text" th:field="*{body[__${entry.key}__]}" value="[[${entry.value}]]"
+                       placeholder="Enter text" required/>
+            </div>
+
+            <!-- Plus button to add more language:text fields -->
+            <button type="button" onclick="addLanguageField()">?</button>
+            <button type="button" onclick="removeLanguageField(this)">?</button>
+        </div>
+
+        <button type="submit" class="btn btn-info col-2">Save Document</button>
+    </form>
+
+    <hr>
+
+    <a th:href="@{/}" class="link-success"> Back to Document List</a>
+</div>
+
+<script>
+    // Function to add new language:text pairs dynamically
+    function addLanguageField() {
+        var bodyEntries = document.getElementById("body-entries");
+
+        // Create a new div container for the language:text pair
+        var div = document.createElement("div");
+        div.className = "pair-container";
+
+        // Language label and input field
+        var languageLabel = document.createElement("label");
+        languageLabel.textContent = "Language:";
+        div.appendChild(languageLabel);
+
+        var languageInput = document.createElement("input");
+        languageInput.type = "text";
+        var langFieldName = "body[NEW_LANG_" + Date.now() + "]";
+        languageInput.name = langFieldName; // Unique name using timestamp
+        languageInput.placeholder = "Enter language";
+        languageInput.required = true;
+        div.appendChild(languageInput);
+
+        // Text label and input field
+        var textLabel = document.createElement("label");
+        textLabel.textContent = "Text:";
+        div.appendChild(textLabel);
+
+        var textInput = document.createElement("input");
+        textInput.type = "text";
+        textInput.name = langFieldName;
+        textInput.placeholder = "Enter text";
+        textInput.required = true;
+        div.appendChild(textInput);
+
+        // Add a plus button for the new pair
+        var addButton = document.createElement("button");
+        addButton.type = "button";
+        addButton.textContent = "?";
+        addButton.onclick = addLanguageField; // Recursive call to add more pairs
+        div.appendChild(addButton);
+
+        // Append the new pair to the form
+        bodyEntries.appendChild(div);
+    }
+
+     function removeLanguageField(button) {
+        var pairContainer = button.parentElement;
+        pairContainer.remove(); // Remove the parent div (the pair container)
+    }
+</script>
+</body>
+
+</html>

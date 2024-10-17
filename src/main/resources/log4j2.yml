@@ -1,0 +1,42 @@
+Configuration:
+  status: error
+  packages: org.apache.logging.log4j.core.io.sentry.log4j2
+
+  Appenders:
+
+    Console:
+      - name: CONSOLE_ROOT
+        target: SYSTEM_OUT
+        PatternLayout:
+          alwaysWriteExceptions: true
+          pattern: "%d %style{[%t]}{blue} %highlight{%-5level} %style{%logger{2}}{yellow} - %msg%n%throwable "
+
+    File:
+      - name: FILE_APPENDER
+        fileName: log/pow-campaign-new.log
+        JSONLayout:
+          compact: true
+          complete: false
+          eventEol: true
+          properties: true
+          objectMessageAsJsonObject: true
+
+  Loggers:
+    logger:
+      - name: CONSOLE_LOGGER
+        level: info
+        additivity: false
+        AppenderRef:
+          ref: CONSOLE_ROOT
+
+      - name: LOGGER_WITH_JSON_LAYOUT
+        level: info
+        additivity: false
+        AppenderRef:
+          ref: FILE_APPENDER
+
+    Root:
+      level: info
+      AppenderRef:
+        - ref: CONSOLE_ROOT
+        - ref: FILE_APPENDER

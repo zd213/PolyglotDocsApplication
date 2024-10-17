@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="ISO-8859-1">
+    <title>Polyglot Documents Store</title>
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+</head>
+
+<body>
+<div class="container my-5">
+    <h1 class="text-center">Polyglot Documents<br>(Demo Spring Boot & Elasticsearch Application)<br/>
+        <a href="/" class="btn btn-danger text-right">Go Home</a>
+    </h1>
+    <hr>
+    <h2>Update Document</h2>
+
+    <form action="#" th:action="@{/saveDocument}" th:object="${document}" method="POST">
+
+        <table>
+            <tr>
+                <td><label for="id">ID:</label></td>
+                <td><input type="text" id="id" th:field="*{id}" /></td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <h4>Body (Key-Value Pairs)</h4>
+                    <table border="1">
+                        <tr>
+                            <th>Key</th>
+                            <th>Value</th>
+                        </tr>
+                        <tr th:each="entry : ${document.body}">
+                            <td><input type="text" th:value="${entry.key}" readonly /></td>
+                            <td><input type="text" th:field="*{body[${entry.key}]}"/></td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </table>
+
+        <button type="submit" class="btn btn-info col-2"> Update Document</button>
+    </form>
+
+    <hr>
+
+    <a th:href="@{/}" class="link-success"> Back to Document List</a>
+</div>
+</body>
+
+</html>
